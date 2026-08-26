@@ -103,16 +103,20 @@
   .orbit .r1{inset:0;border:1.5px dashed var(--line2);animation:spin 30s linear infinite}
   .orbit .r2{inset:34px;border:1.5px solid var(--ice-soft)}
   .orbit .r3{inset:70px;border:1.5px dashed var(--line2);animation:spin 20s linear infinite reverse}
-  .orbit{--r:112px}
-  .orbit .orbit-nodes{position:absolute;inset:0;animation:spin 48s linear infinite}
-  .orbit .snode{position:absolute;top:50%;left:50%;width:0;height:0;transform:rotate(var(--a)) translateY(calc(-1 * var(--r)))}
+  .orbit{--rbase:112px}
+  .orbit .orbit-nodes{position:absolute;inset:0;animation:spin 52s linear infinite}
+  .orbit .snode{position:absolute;top:50%;left:50%;width:0;height:0;transform:rotate(var(--a)) translateY(calc(-1 * var(--k,1) * var(--rbase)))}
+  .orbit .snode:hover{z-index:6}
   .orbit .chip{position:absolute;left:0;top:0;transform:translate(-50%,-50%) rotate(calc(-1 * var(--a)))}
-  .orbit .chip .cspin{display:block;animation:spin 48s linear infinite reverse}
+  .orbit .chip .cspin{display:block;position:relative;animation:spin 52s linear infinite reverse}
   .orbit .chip .bubble{width:52px;height:52px;border-radius:50%;background:#fff;border:1px solid var(--ice-soft);box-shadow:0 8px 20px -8px rgba(20,48,63,.28);display:grid;place-items:center;transition:background .16s,box-shadow .16s}
   .orbit .chip .bubble svg{width:23px;height:23px;color:var(--ice2)}
+  .orbit .stip{position:absolute;top:100%;left:50%;transform:translate(-50%,7px);white-space:nowrap;background:var(--black);color:#fff;font-size:11.5px;font-weight:600;letter-spacing:.2px;padding:5px 10px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .15s;box-shadow:0 8px 20px -8px rgba(0,0,0,.45);z-index:8}
+  .orbit .stip::before{content:"";position:absolute;bottom:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-bottom-color:var(--black)}
   .orbit .orbit-nodes:hover,.orbit .orbit-nodes:hover .cspin{animation-play-state:paused}
   .orbit .snode:hover .bubble{background:var(--ice2);box-shadow:0 10px 24px -8px rgba(47,134,184,.5)}
   .orbit .snode:hover .bubble svg{color:#fff}
+  .orbit .snode:hover .stip{opacity:1}
   .orbit-core{position:absolute;inset:98px;border-radius:50%;background:#fff;border:1px solid var(--line2);display:grid;place-items:center;box-shadow:0 12px 30px -12px rgba(20,48,63,.32)}
   .orbit-core img{width:66%}
   @keyframes spin{to{transform:rotate(360deg)}}
@@ -255,7 +259,7 @@
   .agegate b{color:var(--ice)}
 
   @media(max-width:1080px){.feat,.comp{grid-template-columns:repeat(2,1fr)}.news{grid-template-columns:1fr 1fr}.svc-grid{grid-template-columns:repeat(3,1fr);max-width:560px}}
-  @media(max-width:560px){.svc-grid{grid-template-columns:repeat(2,1fr)}.orbit{width:236px;height:236px;--r:88px}.orbit-core{inset:74px}.orbit .r2{inset:28px}.orbit .r3{inset:56px}.orbit .chip .bubble{width:46px;height:46px}.orbit .chip .bubble svg{width:21px;height:21px}}
+  @media(max-width:560px){.svc-grid{grid-template-columns:repeat(2,1fr)}.orbit{width:236px;height:236px;--rbase:82px}.orbit-core{inset:74px}.orbit .r2{inset:28px}.orbit .r3{inset:56px}.orbit .chip .bubble{width:44px;height:44px}.orbit .chip .bubble svg{width:20px;height:20px}}
   @media(max-width:900px){
     .navlinks,.nav-cta .btn{display:none}
     .burger{display:flex}
@@ -616,8 +620,9 @@ const SERVICES=[
   {ic:'coins',h:'Multi-currency'},{ic:'shield',h:'Server-authoritative'},{ic:'life',h:'Seamless wallet'}
 ];
 document.getElementById('svcGrid').innerHTML=SERVICES.map(s=>`<div class="svc"><div class="ic">${icon(s.ic)}</div><span>${s.h}</span></div>`).join('');
-// orbit nodes = the six services, evenly spaced, staying upright as they orbit
-document.getElementById('orbitNodes').innerHTML=SERVICES.map((s,i)=>`<div class="snode" style="--a:${i*60}deg"><div class="chip"><span class="cspin"><span class="bubble" title="${s.h}">${icon(s.ic)}</span></span></div></div>`).join('');
+// orbit nodes = the six services on different axes/orbits, upright, with hover labels
+const ORBPOS=[{a:16,k:1.18},{a:74,k:0.80},{a:138,k:1.10},{a:206,k:0.72},{a:262,k:1.15},{a:322,k:0.92}];
+document.getElementById('orbitNodes').innerHTML=SERVICES.map((s,i)=>{const p=ORBPOS[i%ORBPOS.length];return `<div class="snode" style="--a:${p.a}deg;--k:${p.k}"><div class="chip"><span class="cspin"><span class="bubble" aria-label="${s.h}">${icon(s.ic)}</span><span class="stip">${s.h}</span></span></div></div>`;}).join('');
 
 const NEWS=[
   {img:IMG.pir,logo:IMG.plogo,tag:'Release',title:"Pirate's Fortune goes live",date:'August 2026'},
