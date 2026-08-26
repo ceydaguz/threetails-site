@@ -103,14 +103,16 @@
   .orbit .r1{inset:0;border:1.5px dashed var(--line2);animation:spin 30s linear infinite}
   .orbit .r2{inset:34px;border:1.5px solid var(--ice-soft)}
   .orbit .r3{inset:70px;border:1.5px dashed var(--line2);animation:spin 20s linear infinite reverse}
-  .orbit .orbit-dot{position:absolute;border-radius:50%}
-  .orbit .orbit-dot::after{content:"";position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%}
-  .orbit .d1{inset:0;animation:spin 24s linear infinite}
-  .orbit .d1::after{background:var(--ice);box-shadow:0 0 10px var(--ice2)}
-  .orbit .d2{inset:34px;animation:spin 18s linear infinite reverse}
-  .orbit .d2::after{background:var(--gold);box-shadow:0 0 10px var(--gold)}
-  .orbit .d3{inset:70px;animation:spin 13s linear infinite}
-  .orbit .d3::after{background:var(--ice2);box-shadow:0 0 8px var(--ice2);width:9px;height:9px;top:-5px}
+  .orbit{--r:112px}
+  .orbit .orbit-nodes{position:absolute;inset:0;animation:spin 48s linear infinite}
+  .orbit .snode{position:absolute;top:50%;left:50%;width:0;height:0;transform:rotate(var(--a)) translateY(calc(-1 * var(--r)))}
+  .orbit .chip{position:absolute;left:0;top:0;transform:translate(-50%,-50%) rotate(calc(-1 * var(--a)))}
+  .orbit .chip .cspin{display:block;animation:spin 48s linear infinite reverse}
+  .orbit .chip .bubble{width:52px;height:52px;border-radius:50%;background:#fff;border:1px solid var(--ice-soft);box-shadow:0 8px 20px -8px rgba(20,48,63,.28);display:grid;place-items:center;transition:background .16s,box-shadow .16s}
+  .orbit .chip .bubble svg{width:23px;height:23px;color:var(--ice2)}
+  .orbit .orbit-nodes:hover,.orbit .orbit-nodes:hover .cspin{animation-play-state:paused}
+  .orbit .snode:hover .bubble{background:var(--ice2);box-shadow:0 10px 24px -8px rgba(47,134,184,.5)}
+  .orbit .snode:hover .bubble svg{color:#fff}
   .orbit-core{position:absolute;inset:98px;border-radius:50%;background:#fff;border:1px solid var(--line2);display:grid;place-items:center;box-shadow:0 12px 30px -12px rgba(20,48,63,.32)}
   .orbit-core img{width:66%}
   @keyframes spin{to{transform:rotate(360deg)}}
@@ -253,7 +255,7 @@
   .agegate b{color:var(--ice)}
 
   @media(max-width:1080px){.feat,.comp{grid-template-columns:repeat(2,1fr)}.news{grid-template-columns:1fr 1fr}.svc-grid{grid-template-columns:repeat(3,1fr);max-width:560px}}
-  @media(max-width:560px){.svc-grid{grid-template-columns:repeat(2,1fr)}.orbit{width:236px;height:236px}.orbit-core{inset:74px}.orbit .r2,.orbit .d2{inset:28px}.orbit .r3,.orbit .d3{inset:56px}}
+  @media(max-width:560px){.svc-grid{grid-template-columns:repeat(2,1fr)}.orbit{width:236px;height:236px;--r:88px}.orbit-core{inset:74px}.orbit .r2{inset:28px}.orbit .r3{inset:56px}.orbit .chip .bubble{width:46px;height:46px}.orbit .chip .bubble svg{width:21px;height:21px}}
   @media(max-width:900px){
     .navlinks,.nav-cta .btn{display:none}
     .burger{display:flex}
@@ -353,7 +355,7 @@
       <h2 style="font-size:34px;margin:12px 0 34px">One platform, every service.</h2>
       <div class="orbit">
         <span class="ring r1"></span><span class="ring r2"></span><span class="ring r3"></span>
-        <span class="orbit-dot d1"></span><span class="orbit-dot d2"></span><span class="orbit-dot d3"></span>
+        <div class="orbit-nodes" id="orbitNodes"></div>
         <div class="orbit-core"><img data-img="mark" alt="Three Tails"></div>
       </div>
       <div class="svc-grid" id="svcGrid"></div>
@@ -614,6 +616,8 @@ const SERVICES=[
   {ic:'coins',h:'Multi-currency'},{ic:'shield',h:'Server-authoritative'},{ic:'life',h:'Seamless wallet'}
 ];
 document.getElementById('svcGrid').innerHTML=SERVICES.map(s=>`<div class="svc"><div class="ic">${icon(s.ic)}</div><span>${s.h}</span></div>`).join('');
+// orbit nodes = the six services, evenly spaced, staying upright as they orbit
+document.getElementById('orbitNodes').innerHTML=SERVICES.map((s,i)=>`<div class="snode" style="--a:${i*60}deg"><div class="chip"><span class="cspin"><span class="bubble" title="${s.h}">${icon(s.ic)}</span></span></div></div>`).join('');
 
 const NEWS=[
   {img:IMG.pir,logo:IMG.plogo,tag:'Release',title:"Pirate's Fortune goes live",date:'August 2026'},
