@@ -530,6 +530,7 @@ POST <span class="k">/api/operator/launch</span><br>
             <div class="field"><label>Contact email <span class="req">*</span></label><input name="email" type="email" required placeholder="jane@casino.com"></div>
             <div class="field"><label>Website</label><input name="site" placeholder="https://"></div>
           </div>
+          <div class="field"><label>Telegram</label><input name="telegram" placeholder="@yourusername — fastest way to reach you"></div>
           <div class="frow">
             <div class="field"><label>Target markets</label><input name="markets" placeholder="e.g. Maldives, MENA, LatAm"></div>
             <div class="field"><label>Monthly active players</label>
@@ -571,6 +572,7 @@ POST <span class="k">/api/operator/launch</span><br>
             <div class="field"><label>Category <span class="req">*</span></label>
               <select name="category" required><option value="">Select…</option><option>Integration</option><option>Wallet / payments</option><option>Provably-fair verification</option><option>RTP / configuration</option><option>Billing</option><option>Other</option></select></div>
           </div>
+          <div class="field"><label>Telegram</label><input name="telegram" placeholder="@yourusername"></div>
           <div class="field"><label>Priority</label>
             <select name="priority"><option>Normal</option><option>High — affecting live players</option><option>Low — question</option></select></div>
           <div class="field"><label>Describe the issue <span class="req">*</span></label><textarea name="message" required placeholder="Include operator id, game, and any error you're seeing…"></textarea></div>
@@ -794,6 +796,8 @@ function walkAndTranslate(lang){
 function submitForm(e,kind){
   e.preventDefault();
   const f=e.target, d=new FormData(f);
+  try{ const payload={kind:kind}; for(const [k,v] of d.entries()) payload[k]=v;
+    fetch('https://tt-dashboard-production-19cc.up.railway.app/api/public/leads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),keepalive:true}).catch(function(){}); }catch(_){}
   const to=kind==='support'?'support@threetails.games':'info@threetails.games';
   const subj=kind==='support'?'Support request':'Partnership enquiry';
   let body=''; for(const [k,v] of d.entries()){ if(v) body+=k+': '+v+'\n'; }
